@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://sprites/background 2.png" type="Texture" id=1]
 [ext_resource path="res://sprites/Top UI v 2.png" type="Texture" id=2]
 [ext_resource path="res://sprites/Bottom UI v 2.png" type="Texture" id=3]
+[ext_resource path="res://scripts/grid.gd" type="Script" id=4]
 
 [node name="game_window" type="Node2D"]
 
@@ -22,4 +23,7 @@ margin_top = 928.0
 margin_right = 576.0
 margin_bottom = 1020.0
 texture = ExtResource( 3 )
+
+[node name="grid" type="Node2D" parent="."]
+script = ExtResource( 4 )
 

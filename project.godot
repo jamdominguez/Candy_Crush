@@ -16,6 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Candy_Crash"
+run/main_scene="res://scenes/game_window.tscn"
 config/icon="res://icon.png"
 
 [display]
