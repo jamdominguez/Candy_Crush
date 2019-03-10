@@ -29,6 +29,9 @@ func _ready():
 	all_pieces = make_2d_array()
 	spawn_piece()
 
+func _process(delta):
+	touch_imput()
+
 #Return a matrix
 func make_2d_array():
 	var array = []
@@ -57,7 +60,7 @@ func spawn_piece():
 			piece.position = grid_to_pixel(i,j)
 			all_pieces[i][j] = piece
 
-func match_at(column,row, color):
+func match_at(column, row, color):
 	if column > 1:
 		if all_pieces[column - 1][row] != null && all_pieces[column - 2][row] != null:
 			if all_pieces[column - 1][row].color == color && all_pieces[column - 2][row].color == color:
@@ -100,11 +103,12 @@ func touch_imput():
 func swap_pieces(column, row,direction):
 	var first_piece =all_pieces[column][row]
 	var other_piece =all_pieces[column+direction.x][row+direction.y]
-	all_pieces[column][row] = other_piece
-	all_pieces[column+direction.x][row+direction.y]= first_piece;
-	first_piece.move(grid_to_pixel(column+direction.x,row+direction.y))
-	other_piece.move(grid_to_pixel(column,row))
-	find_matches()
+	if first_piece != null && other_piece != null:
+		all_pieces[column][row] = other_piece
+		all_pieces[column+direction.x][row+direction.y]= first_piece;
+		first_piece.move(grid_to_pixel(column+direction.x,row+direction.y))
+		other_piece.move(grid_to_pixel(column,row))
+		find_matches()
 
 func touch_difference(grid_1,grid_2):
 	var difference = grid_2 - grid_1
@@ -119,9 +123,7 @@ func touch_difference(grid_1,grid_2):
 		elif difference.y<0:
 			swap_pieces(grid_1.x,grid_1.y,Vector2(0,-1))
 
-func _process(delta):
-	touch_imput()
-
+# Find the pieces mat
 func find_matches():
 	for i in width:
 		for j in height:
@@ -137,12 +139,23 @@ func find_matches():
 						if all_pieces[i][j-1].color == current_color && all_pieces[i][j+1].color == current_color:
 							var pieces = [all_pieces[i][j-1], all_pieces[i][j], all_pieces[i][j+1]]
 							change_pieces_visibility(pieces, true)
+	get_parent().get_node('destroy_timer').start()
 
+# Change the visibility of pieces array according matched value
 func change_pieces_visibility(pieces, matched):
 	for piece in pieces:
 		piece.matched = matched
 		piece.dim()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+# Destroy the pieces matched
+func destroy_matches():
+	for i in width:
+		for j in height:
+			var piece = all_pieces[i][j]
+			if piece != null and piece.matched:
+				piece.queue_free()
+				all_pieces[i][j] = null
+
+# Destroy the pieces mached fater a timing expecified
+func _on_destroy_timer_timeout():
+	destroy_matches()
