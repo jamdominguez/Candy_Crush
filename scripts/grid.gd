@@ -156,6 +156,6 @@ func destroy_matches():
 				piece.queue_free()
 				all_pieces[i][j] = null
 
-# Destroy the pieces mached fater a timing expecified
+# SIGNAL: Destroy the pieces mached after a timing expecified. It is called when start function on timer node is executed
 func _on_destroy_timer_timeout():
 	destroy_matches()
