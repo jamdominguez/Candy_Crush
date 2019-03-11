@@ -155,7 +155,23 @@ func destroy_matches():
 			if piece != null and piece.matched:
 				piece.queue_free()
 				all_pieces[i][j] = null
+	get_parent().get_node('collapse_timer').start()
+
+func collapse_columns():
+	for i in width:
+		for j in height:
+			if all_pieces[i][j] == null:
+				for k in range(j + 1, height):
+					if all_pieces[i][k] != null:
+						all_pieces[i][k].move(grid_to_pixel(i,j))
+						all_pieces[i][j] = all_pieces[i][k]
+						all_pieces[i][k] = null
+						break
 
 # SIGNAL: Destroy the pieces mached after a timing expecified. It is called when start function on timer node is executed
 func _on_destroy_timer_timeout():
 	destroy_matches()
+
+# SIGNAL: Collapse the pieces
+func _on_collapse_timer_timeout():
+	collapse_columns()
