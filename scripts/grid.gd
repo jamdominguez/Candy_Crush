@@ -167,6 +167,25 @@ func collapse_columns():
 						all_pieces[i][j] = all_pieces[i][k]
 						all_pieces[i][k] = null
 						break
+	get_parent().get_node('refill_timer').start()
+
+func refill_columns():
+	for i in width:
+		for j in height:
+			if all_pieces[i][j] == null:
+				#choose a random nuber and store it
+				var rand = randi() % possible_pieces.size()
+				#var rand = floor(rand_range(0, possible_pieces.size()))
+				#Instance that piece from the array
+				var piece = possible_pieces[rand].instance()
+				var loops = 0
+				while (match_at(i,j,piece.color) && loops < 100):
+					rand = randi() % possible_pieces.size()
+					loops += 1
+					piece = possible_pieces[rand].instance()
+				add_child(piece)
+				piece.position = grid_to_pixel(i,j)
+				all_pieces[i][j] = piece
 
 # SIGNAL: Destroy the pieces mached after a timing expecified. It is called when start function on timer node is executed
 func _on_destroy_timer_timeout():
@@ -175,3 +194,7 @@ func _on_destroy_timer_timeout():
 # SIGNAL: Collapse the pieces
 func _on_collapse_timer_timeout():
 	collapse_columns()
+
+# SIGNAL: Refill the grid with pieces
+func _on_refill_timer_timeout():
+	refill_columns()
