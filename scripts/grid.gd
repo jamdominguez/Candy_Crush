@@ -6,6 +6,7 @@ export (int) var height = 10
 export (int) var x_start = 64
 export (int) var y_start = 800
 export (int) var offset =  64
+export (int) var y_offset = -2
 
 #The piece array
 var possible_pieces = [
@@ -184,7 +185,8 @@ func refill_columns():
 					loops += 1
 					piece = possible_pieces[rand].instance()
 				add_child(piece)
-				piece.position = grid_to_pixel(i,j)
+				piece.position = grid_to_pixel(i,j - y_offset)
+				piece.move(grid_to_pixel(i,j))
 				all_pieces[i][j] = piece
 
 # SIGNAL: Destroy the pieces mached after a timing expecified. It is called when start function on timer node is executed
