@@ -1,5 +1,9 @@
 extends Node2D
 
+#State Machine
+enum {wait, move}
+var state
+
 #Grid variables
 export (int) var width = 8
 export (int) var height = 10
@@ -27,11 +31,13 @@ var controlling = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	state = move
 	all_pieces = make_2d_array()
 	spawn_piece()
 
 func _process(delta):
-	touch_imput()
+	if state == move:
+		touch_imput()
 
 #Return a matrix
 func make_2d_array():
@@ -93,6 +99,7 @@ func swap_pieces(column, row,direction):
 	var first_piece =all_pieces[column][row]
 	var other_piece =all_pieces[column+direction.x][row+direction.y]
 	if first_piece != null && other_piece != null:
+		state = wait
 		all_pieces[column][row] = other_piece
 		all_pieces[column+direction.x][row+direction.y]= first_piece;
 		first_piece.move(grid_to_pixel(column+direction.x,row+direction.y))
@@ -163,6 +170,7 @@ func refill_columns():
 		for j in height:
 			if all_pieces[i][j] == null:
 				set_random_piece_on_grid(i,j)
+	after_refill()
 
 func set_random_piece_on_grid(i,j):
 	# choose a random number and store it
@@ -180,6 +188,15 @@ func set_random_piece_on_grid(i,j):
 	piece.position = grid_to_pixel(i,j - y_offset)
 	piece.move(grid_to_pixel(i,j))
 	all_pieces[i][j] = piece
+
+func after_refill():
+	for i in width:
+		for j in height:
+			if all_pieces[i][j] != null and match_at(i,j,all_pieces[i][j].color):
+				find_matches()
+				get_parent().get_node("destroy_timer").start()
+				return
+	state = move
 
 # SIGNAL: Destroy the pieces mached after a timing expecified. It is called when start function on timer node is executed
 func _on_destroy_timer_timeout():
