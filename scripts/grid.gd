@@ -24,6 +24,13 @@ var possible_pieces = [
 # Current pieces in the screen
 var all_pieces
 
+# Swap Back Variables
+var piece_one = null
+var piece_two = null
+var last_place = Vector2(0,0)
+var last_direction = Vector2(0,0)
+var move_checked = false
+
 # Touch Variables
 var first_touch= Vector2(0,0)
 var final_touch= Vector2(0,0)
@@ -104,12 +111,27 @@ func swap_pieces(column, row,direction):
 	var first_piece =all_pieces[column][row]
 	var other_piece =all_pieces[column+direction.x][row+direction.y]
 	if first_piece != null && other_piece != null:
+		store_info(first_piece, other_piece, Vector2(column,row), direction)
 		state = wait
 		all_pieces[column][row] = other_piece
 		all_pieces[column+direction.x][row+direction.y]= first_piece;
 		first_piece.move(grid_to_pixel(column+direction.x,row+direction.y))
 		other_piece.move(grid_to_pixel(column,row))
-		find_matches()
+		if !move_checked:
+			find_matches()
+
+func store_info(first_piece, other_piece, place, direction):
+	piece_one = first_piece
+	piece_two = other_piece
+	last_place = place
+	last_direction = direction
+
+func swap_back():
+	# Move the prevously swapped pieces back to the previous place
+	if piece_one != null and piece_two != null:
+		swap_pieces(last_place.x, last_place.y, last_direction)
+	state = move
+	move_checked = false
 
 # Swap the pieces considering the max distance (1) to move
 func touch_difference(grid_1,grid_2):
@@ -151,16 +173,22 @@ func change_pieces_visibility(pieces, matched):
 
 # Destroy the pieces matched
 func destroy_matches():
+	var was_matches = false
 	for i in width:
 		for j in height:
 			var piece = all_pieces[i][j]
 			if piece != null and piece.matched:
+				was_matches = true
 				piece.queue_free()
 				all_pieces[i][j] = null
-	get_parent().get_node('collapse_timer').start()
+	move_checked = true
+	if was_matches:
+		get_parent().get_node('collapse_timer').start()
+	else:
+		swap_back()
 
 # Collapse the pieces into a column
-func collapse_columns():
+func collapse_columns():	
 	for i in width:
 		for j in height:
 			if all_pieces[i][j] == null:
@@ -207,6 +235,7 @@ func after_refill():
 				get_parent().get_node("destroy_timer").start()
 				return
 	state = move
+	move_checked = false
 
 ##################################################################################################################################
 ##################################################################################################################################
