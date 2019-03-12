@@ -1,10 +1,10 @@
 extends Node2D
 
-#State Machine
+# State Machine. To control the function calls timing (no refill before collapse for example)
 enum {wait, move}
 var state
 
-#Grid variables
+# Grid variables
 export (int) var width = 8
 export (int) var height = 10
 export (int) var x_start = 64
@@ -12,7 +12,7 @@ export (int) var y_start = 800
 export (int) var offset =  64
 export (int) var y_offset = -2
 
-#The piece array
+# The piece array
 var possible_pieces = [
 	preload("res://scenes/piece/piece_blue.tscn"),
 	preload("res://scenes/piece/piece_green.tscn"),
@@ -21,10 +21,10 @@ var possible_pieces = [
 	preload("res://scenes/piece/piece_yellow.tscn"),
 	preload("res://scenes/piece/piece_pink.tscn")
 ]
-#current pieces in the screen
+# Current pieces in the screen
 var all_pieces
 
-#Touch Variables
+# Touch Variables
 var first_touch= Vector2(0,0)
 var final_touch= Vector2(0,0)
 var controlling = false
@@ -35,11 +35,12 @@ func _ready():
 	all_pieces = make_2d_array()
 	spawn_piece()
 
+# Called every frame. 'delta' is the elapsed time since the previous frame
 func _process(delta):
 	if state == move:
 		touch_imput()
 
-#Return a matrix
+# Returns a matrix
 func make_2d_array():
 	var array = []
 	for i in width:
@@ -48,13 +49,14 @@ func make_2d_array():
 			array[i].append(null)
 	return array
 
-#Set all pieces into the grid
+# Set all pieces into the grid
 func spawn_piece():
 	randomize()
 	for i in width:
 		for j in height:
 			set_random_piece_on_grid(i,j)
 
+# Returns true is find at less 3 pieces with same color
 func match_at(column, row, color):
 	if column > 1:
 		if all_pieces[column - 1][row] != null && all_pieces[column - 2][row] != null:
@@ -66,24 +68,26 @@ func match_at(column, row, color):
 				return true
 	return false
 
-#Return the position in pixel according column and row
+# Returns the position in pixel according column and row
 func grid_to_pixel(column, row):
 	var new_x = x_start + offset * column
 	var new_y = y_start + -offset * row
 	return Vector2(new_x,new_y)
-	
+
+# Check if grid_position is in grid
 func is_in_grid(grid_position):
 	if grid_position.x>=0 &&grid_position.x<width:
 		if grid_position.y>= 0&& grid_position.y<height:
 			return true
 		return false
 
-#return the position in a column and row according to a pixel
+# Returns the position in a column and row according to a pixel
 func pixel_to_grid(pixel):
 	var new_x = round((pixel.x -x_start)/offset)
 	var new_y = round((pixel.y -y_start)/-offset)
 	return Vector2(new_x,new_y)
 
+# Check if some input is executed by the player
 func touch_imput():
 	if Input.is_action_just_pressed("ui_touch"):
 		if is_in_grid(pixel_to_grid(get_global_mouse_position())):
@@ -95,6 +99,7 @@ func touch_imput():
 			final_touch = pixel_to_grid(get_global_mouse_position())
 			touch_difference(first_touch, final_touch)
 
+# Swap a piece in column and row (i,j) to the "direction"
 func swap_pieces(column, row,direction):
 	var first_piece =all_pieces[column][row]
 	var other_piece =all_pieces[column+direction.x][row+direction.y]
@@ -106,6 +111,7 @@ func swap_pieces(column, row,direction):
 		other_piece.move(grid_to_pixel(column,row))
 		find_matches()
 
+# Swap the pieces considering the max distance (1) to move
 func touch_difference(grid_1,grid_2):
 	var difference = grid_2 - grid_1
 	if abs(difference.x)>abs(difference.y):
@@ -119,7 +125,7 @@ func touch_difference(grid_1,grid_2):
 		elif difference.y<0:
 			swap_pieces(grid_1.x,grid_1.y,Vector2(0,-1))
 
-# Find the pieces mat
+# Find the pieces matches
 func find_matches():
 	for i in width:
 		for j in height:
@@ -153,6 +159,7 @@ func destroy_matches():
 				all_pieces[i][j] = null
 	get_parent().get_node('collapse_timer').start()
 
+# Collapse the pieces into a column
 func collapse_columns():
 	for i in width:
 		for j in height:
@@ -165,6 +172,7 @@ func collapse_columns():
 						break
 	get_parent().get_node('refill_timer').start()
 
+# Refill with pieces a column
 func refill_columns():
 	for i in width:
 		for j in height:
@@ -172,6 +180,7 @@ func refill_columns():
 				set_random_piece_on_grid(i,j)
 	after_refill()
 
+# Set a random piece into the grid
 func set_random_piece_on_grid(i,j):
 	# choose a random number and store it
 	var rand = randi() % possible_pieces.size()	
@@ -189,6 +198,7 @@ func set_random_piece_on_grid(i,j):
 	piece.move(grid_to_pixel(i,j))
 	all_pieces[i][j] = piece
 
+# Check the matches after refill
 func after_refill():
 	for i in width:
 		for j in height:
@@ -198,6 +208,9 @@ func after_refill():
 				return
 	state = move
 
+##################################################################################################################################
+##################################################################################################################################
+##################################################################################################################################
 # SIGNAL: Destroy the pieces mached after a timing expecified. It is called when start function on timer node is executed
 func _on_destroy_timer_timeout():
 	destroy_matches()
