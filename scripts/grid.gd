@@ -12,6 +12,9 @@ export (int) var y_start = 800
 export (int) var offset =  64
 export (int) var y_offset = -2
 
+# Obstacle Stuff
+export (PoolVector2Array) var empty_spaces
+
 # The piece array
 var possible_pieces = [
 	preload("res://scenes/piece/piece_blue.tscn"),
@@ -41,6 +44,13 @@ func _ready():
 	state = move
 	all_pieces = make_2d_array()
 	spawn_piece()
+
+# Check if the place is a available place to move a piece
+func restricted_movement(place):
+	for i in empty_spaces.size():
+		if empty_spaces[i] == place:
+			return true
+	return false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame
 func _process(delta):
@@ -188,10 +198,10 @@ func destroy_matches():
 		swap_back()
 
 # Collapse the pieces into a column
-func collapse_columns():	
+func collapse_columns():
 	for i in width:
 		for j in height:
-			if all_pieces[i][j] == null:
+			if all_pieces[i][j] == null and !restricted_movement(Vector2(i,j)):
 				for k in range(j + 1, height):
 					if all_pieces[i][k] != null:
 						all_pieces[i][k].move(grid_to_pixel(i,j))
@@ -210,21 +220,22 @@ func refill_columns():
 
 # Set a random piece into the grid
 func set_random_piece_on_grid(i,j):
-	# choose a random number and store it
-	var rand = randi() % possible_pieces.size()	
-	# Instance that piece from the array
-	var piece = possible_pieces[rand].instance()
-	var loops = 0
-	# Check will be different colors in closer pieces
-	while (match_at(i,j,piece.color) && loops < 100):
-		rand = randi() % possible_pieces.size()
-		loops += 1
-		piece = possible_pieces[rand].instance()
-	add_child(piece)
-	# Simulates the piece fallen. Sliding piece
-	piece.position = grid_to_pixel(i,j - y_offset)
-	piece.move(grid_to_pixel(i,j))
-	all_pieces[i][j] = piece
+	if !restricted_movement(Vector2(i,j)):
+		# choose a random number and store it
+		var rand = randi() % possible_pieces.size()
+		# Instance that piece from the array
+		var piece = possible_pieces[rand].instance()
+		var loops = 0
+		# Check will be different colors in closer pieces
+		while (match_at(i,j,piece.color) && loops < 100):
+			rand = randi() % possible_pieces.size()
+			loops += 1
+			piece = possible_pieces[rand].instance()
+		add_child(piece)
+		# Simulates the piece fallen. Sliding piece
+		piece.position = grid_to_pixel(i,j - y_offset)
+		piece.move(grid_to_pixel(i,j))
+		all_pieces[i][j] = piece
 
 # Check the matches after refill
 func after_refill():

@@ -26,6 +26,7 @@ texture = ExtResource( 3 )
 
 [node name="grid" type="Node2D" parent="."]
 script = ExtResource( 4 )
+empty_spaces = PoolVector2Array( 0, 0, 7, 0, 0, 9, 7, 9, 3, 4, 4, 4, 3, 5, 4, 5 )
 
 [node name="destroy_timer" type="Timer" parent="."]
 wait_time = 0.5
