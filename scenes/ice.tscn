@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scripts/ice.gd" type="Script" id=1]
+[ext_resource path="res://Match 3 Assets/Obstacles/Ice.png" type="Texture" id=2]
+
+[node name="ice" type="Node2D"]
+scale = Vector2( 0.5, 0.5 )
+script = ExtResource( 1 )
+health = 2
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+

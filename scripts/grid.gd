@@ -14,6 +14,11 @@ export (int) var y_offset = -2
 
 # Obstacle Stuff
 export (PoolVector2Array) var empty_spaces
+export (PoolVector2Array) var ice_spaces
+
+# Obstacle Signals
+signal damage_ice
+signal make_ice
 
 # The piece array
 var possible_pieces = [
@@ -41,9 +46,11 @@ var controlling = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	print("_ready - grid")
 	state = move
-	all_pieces = make_2d_array()
+	all_pieces = make_2d_array()	
 	spawn_piece()
+	spawn_ice()
 
 # Check if the place is a available place to move a piece
 func restricted_movement(place):
@@ -72,6 +79,10 @@ func spawn_piece():
 	for i in width:
 		for j in height:
 			set_random_piece_on_grid(i,j)
+
+func spawn_ice():
+	for i in ice_spaces.size():
+		emit_signal("make_ice", ice_spaces[i])
 
 # Returns true is find at less 3 pieces with same color
 func match_at(column, row, color):
@@ -188,6 +199,7 @@ func destroy_matches():
 		for j in height:
 			var piece = all_pieces[i][j]
 			if piece != null and piece.matched:
+				#emit_signal("damage_ice", Vector2(i,j))
 				was_matches = true
 				piece.queue_free()
 				all_pieces[i][j] = null
