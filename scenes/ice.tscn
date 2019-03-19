@@ -6,7 +6,7 @@
 [node name="ice" type="Node2D"]
 scale = Vector2( 0.5, 0.5 )
 script = ExtResource( 1 )
-health = 2
+health = 1
 
 [node name="Sprite" type="Sprite" parent="."]
 texture = ExtResource( 2 )
