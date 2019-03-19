@@ -54,17 +54,24 @@ func _ready():
 
 # Check if the place is a available place to move a piece
 func restricted_movement(place):
-	for i in empty_spaces.size():
-		if empty_spaces[i] == place:
+	if is_in_array(empty_spaces, place):
+		return true
+	return false
+
+# FIXME[This method has a better implementation]
+func is_in_array(array,item):
+	for i in array.size():
+		if array[i] == item:
 			return true
 	return false
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame
 func _process(delta):
 	if state == move:
 		touch_imput()
 
-# Returns a matrix
+# Returns a matrix FIXME[Export this method to singleton script]
 func make_2d_array():
 	var array = []
 	for i in width:
@@ -175,18 +182,33 @@ func find_matches():
 			if all_pieces[i][j] != null:
 				var current_color = all_pieces[i][j].color
 				if i > 0 && i < width - 1:
-					if all_pieces[i-1][j] != null && all_pieces[i+1][j] != null:
+					if not is_piece_null(i-1,j) && not is_piece_null(i+1,j):
 						if all_pieces[i-1][j].color == current_color && all_pieces[i+1][j].color == current_color:
 							var pieces = [all_pieces[i-1][j], all_pieces[i][j], all_pieces[i+1][j]]
-							change_pieces_visibility(pieces, true)
+							#change_pieces_visibility(pieces, true)
+							match_and_dim(all_pieces[i-1][j])
+							match_and_dim(all_pieces[i][j])
+							match_and_dim(all_pieces[i+1][j])
 				if j > 0 && j < height - 1:
-					if all_pieces[i][j-1] != null && all_pieces[i][j+1] != null:
+					if not is_piece_null(i,j-1) && not is_piece_null(i,j+1):
 						if all_pieces[i][j-1].color == current_color && all_pieces[i][j+1].color == current_color:
 							var pieces = [all_pieces[i][j-1], all_pieces[i][j], all_pieces[i][j+1]]
-							change_pieces_visibility(pieces, true)
+							#change_pieces_visibility(pieces, true)
+							match_and_dim(all_pieces[i][j-1])
+							match_and_dim(all_pieces[i][j])
+							match_and_dim(all_pieces[i][j+1])
 	get_parent().get_node('destroy_timer').start()
 
-# Change the visibility of pieces array according matched value
+func is_piece_null(column,row):
+	if all_pieces[column][row] == null:
+		return true
+	false
+
+func match_and_dim(item):
+	item.matched = true
+	item.dim()
+
+# FIXME[This method is main: Change the visibility of pieces array according matched value]
 func change_pieces_visibility(pieces, matched):
 	for piece in pieces:
 		piece.matched = matched
