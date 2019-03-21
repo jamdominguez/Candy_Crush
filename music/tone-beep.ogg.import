@@ -11,5 +11,5 @@ dest_files=[ "res://.import/tone-beep.ogg-2b73e450d9983b710815f3ee082c3711.oggst
 
 [params]
 
-loop=true
+loop=false
 loop_offset=0

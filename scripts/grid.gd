@@ -203,6 +203,7 @@ func destroy_matches():
 				all_pieces[i][j] = null
 	move_checked = true
 	if was_matches:
+		get_parent().get_node("destroy_audio").play()
 		get_parent().get_node('collapse_timer').start()
 	else:
 		swap_back()
@@ -256,8 +257,9 @@ func recheck_matchs():
 	for i in width:
 		for j in height:
 			if all_pieces[i][j] != null and match_at(i,j,all_pieces[i][j].color):
-				find_matches()
-				get_parent().get_node("destroy_timer").start()				
+				find_matches()				
+				get_parent().get_node("combo_audio").play()
+				get_parent().get_node("destroy_timer").start()
 				return
 	state = move
 	move_checked = false
