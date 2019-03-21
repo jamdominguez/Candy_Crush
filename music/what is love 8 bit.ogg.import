@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/what is love 8 bit.ogg-d317d5de66af080af667dbce8eadbc03.oggstr"
+
+[deps]
+
+source_file="res://music/what is love 8 bit.ogg"
+dest_files=[ "res://.import/what is love 8 bit.ogg-d317d5de66af080af667dbce8eadbc03.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

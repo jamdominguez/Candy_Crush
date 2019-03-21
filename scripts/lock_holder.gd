@@ -10,33 +10,22 @@ var licorice = preload("res://scenes/licorice.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	print("_ready - ice_holder lock_pieces.size["+String(lock_pieces.size())+"]")
-
-# Returns a matrix
-func make_2d_array():
-	var array = []
-	for i in width:
-		array.append([])
-		for j in height:
-			array[i].append(null)
-	return array
+	pass
 
 ################################################################################################
 ################################################################################################
 ################################################################################################
 # SIGNAL: function for make_lock signal
-func _on_grid_make_lock(board_position):
-	print("_on_grid_make_lock["+String(board_position)+"]")
+func _on_grid_make_lock(board_position):	
 	if lock_pieces.size() == 0:
-		lock_pieces = make_2d_array()
+		lock_pieces = utils.make_2d_array(width,height)
 	var current = licorice.instance()
 	add_child(current)
 	current.position = Vector2(board_position.x * 64 + 64 , -board_position.y * 64 + 800)
 	lock_pieces[board_position.x][board_position.y] = current
 
 # SIGNAL: function for damage_lock signal
-func _on_grid_damage_lock(board_position):
-	print("_on_grid_damage_lock["+String(board_position)+"]")
+func _on_grid_damage_lock(board_position):	
 	var current_ice_piece = lock_pieces[board_position.x][board_position.y]
 	if current_ice_piece != null:
 		current_ice_piece.take_damage(1)

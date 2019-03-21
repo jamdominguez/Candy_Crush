@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/Benny-hill-theme.ogg-14e455091adcbb03cde5a7e5064927ef.oggstr"
+
+[deps]
+
+source_file="res://music/Benny-hill-theme.ogg"
+dest_files=[ "res://.import/Benny-hill-theme.ogg-14e455091adcbb03cde5a7e5064927ef.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

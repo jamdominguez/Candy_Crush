@@ -8,16 +8,14 @@ var matched = false
 func _ready():
 	move_tween=$move_tween
 
+# Move the piece to the target
 func move(target):
-	move_tween.interpolate_property(self,"position",position,target,.3,
+	move_tween.interpolate_property(self,"position",position,target,.4,
 	Tween.TRANS_ELASTIC,Tween.EASE_OUT)
 	move_tween.start()
 
+# Dim the piece
 func dim():
 	var sprite = get_node("Sprite")
 	sprite.modulate = Color(1, 1, 1, .5)
 	pass
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass

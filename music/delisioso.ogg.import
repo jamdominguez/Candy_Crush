@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/delisioso.ogg-1e17bc68dc812d5d02c548838e865dfc.oggstr"
+
+[deps]
+
+source_file="res://music/delisioso.ogg"
+dest_files=[ "res://.import/delisioso.ogg-1e17bc68dc812d5d02c548838e865dfc.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

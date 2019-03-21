@@ -19,6 +19,10 @@ config/name="Candy_Crush"
 run/main_scene="res://scenes/game_window.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+utils="*res://scripts/utils.gd"
+
 [display]
 
 window/size/width=576

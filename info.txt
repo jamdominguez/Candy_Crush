@@ -1,0 +1,7 @@
+- Se puede declarar de manera visible para el inspector una variable con export, dentro del script variables section del inpsector
+export (String) var color
+
+ctrl+i autoidenta
+
+floor() pilla la parte entero
+instance()

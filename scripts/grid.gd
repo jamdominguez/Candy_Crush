@@ -49,47 +49,21 @@ var controlling = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	print("_ready - grid")
 	state = move
-	all_pieces = make_2d_array()	
-	spawn_piece()
-	spawn_ice()
-	spawn_lock()
+	all_pieces = utils.make_2d_array(width,height)
+	get_parent().get_node("main_theme_audio").play()
+	get_parent().get_node("ready_timer").start()
 
-# Check if the place is a available place to move a piece
-func restricted_movement(place):
-	# Check the empty peices
-	if is_in_array(empty_spaces, place):
+# Return true if the place is into spaces array
+func restricted_move(place,spaces):
+	if place in spaces:
 		return true
 	return false
-
-func restricted_move(place):
-	# Check the licorice pieces
-	if is_in_array(lock_spaces, place):
-		return true
-	return false
-
-# FIXME[This method has a better implementation]
-func is_in_array(array,item):
-	for i in array.size():
-		if array[i] == item:
-			return true
-	return false
-	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame
 func _process(delta):
 	if state == move:
 		touch_imput()
-
-# Returns a matrix FIXME[Export this method to singleton script]
-func make_2d_array():
-	var array = []
-	for i in width:
-		array.append([])
-		for j in height:
-			array[i].append(null)
-	return array
 
 # Set all pieces into the grid
 func spawn_piece():
@@ -154,7 +128,7 @@ func swap_pieces(column, row,direction):
 	var first_piece =all_pieces[column][row]
 	var other_piece =all_pieces[column+direction.x][row+direction.y]
 	if first_piece != null && other_piece != null:
-		if not restricted_move(Vector2(column,row)) and not restricted_move(Vector2(column,row) + direction):
+		if not restricted_move(Vector2(column,row), lock_spaces) and not restricted_move(Vector2(column,row) + direction, lock_spaces):
 			store_info(first_piece, other_piece, Vector2(column,row), direction)
 			state = wait
 			all_pieces[column][row] = other_piece
@@ -198,33 +172,19 @@ func find_matches():
 			if all_pieces[i][j] != null:
 				var current_color = all_pieces[i][j].color
 				if i > 0 && i < width - 1:
-					if not is_piece_null(i-1,j) && not is_piece_null(i+1,j):
+					if not all_pieces[i-1][j]==null && not all_pieces[i+1][j]==null:
 						if all_pieces[i-1][j].color == current_color && all_pieces[i+1][j].color == current_color:
 							var pieces = [all_pieces[i-1][j], all_pieces[i][j], all_pieces[i+1][j]]
-							#change_pieces_visibility(pieces, true)
-							match_and_dim(all_pieces[i-1][j])
-							match_and_dim(all_pieces[i][j])
-							match_and_dim(all_pieces[i+1][j])
+							change_pieces_visibility(pieces, true)							
+
 				if j > 0 && j < height - 1:
-					if not is_piece_null(i,j-1) && not is_piece_null(i,j+1):
+					if not all_pieces[i][j-1]==null && not all_pieces[i][j+1]==null:
 						if all_pieces[i][j-1].color == current_color && all_pieces[i][j+1].color == current_color:
 							var pieces = [all_pieces[i][j-1], all_pieces[i][j], all_pieces[i][j+1]]
-							#change_pieces_visibility(pieces, true)
-							match_and_dim(all_pieces[i][j-1])
-							match_and_dim(all_pieces[i][j])
-							match_and_dim(all_pieces[i][j+1])
+							change_pieces_visibility(pieces, true)
 	get_parent().get_node('destroy_timer').start()
 
-func is_piece_null(column,row):
-	if all_pieces[column][row] == null:
-		return true
-	false
-
-func match_and_dim(item):
-	item.matched = true
-	item.dim()
-
-# FIXME[This method is main: Change the visibility of pieces array according matched value]
+# This method is main: Change the visibility of pieces array according matched value]
 func change_pieces_visibility(pieces, matched):
 	for piece in pieces:
 		piece.matched = matched
@@ -255,7 +215,7 @@ func damage_special(column,row):
 func collapse_columns():
 	for i in width:
 		for j in height:
-			if all_pieces[i][j] == null and !restricted_movement(Vector2(i,j)):
+			if all_pieces[i][j] == null and !restricted_move(Vector2(i,j), empty_spaces):
 				for k in range(j + 1, height):
 					if all_pieces[i][k] != null:
 						all_pieces[i][k].move(grid_to_pixel(i,j))
@@ -270,11 +230,11 @@ func refill_columns():
 		for j in height:
 			if all_pieces[i][j] == null:
 				set_random_piece_on_grid(i,j)
-	after_refill()
+	recheck_matchs()
 
 # FIXME[This method is mine. Set a random piece into the grid]
 func set_random_piece_on_grid(i,j):
-	if !restricted_movement(Vector2(i,j)):
+	if not restricted_move(Vector2(i,j), empty_spaces):
 		# choose a random number and store it
 		var rand = randi() % possible_pieces.size()
 		# Instance that piece from the array
@@ -292,12 +252,12 @@ func set_random_piece_on_grid(i,j):
 		all_pieces[i][j] = piece
 
 # Check the matches after refill
-func after_refill():
+func recheck_matchs():
 	for i in width:
 		for j in height:
 			if all_pieces[i][j] != null and match_at(i,j,all_pieces[i][j].color):
 				find_matches()
-				get_parent().get_node("destroy_timer").start()
+				get_parent().get_node("destroy_timer").start()				
 				return
 	state = move
 	move_checked = false
@@ -307,7 +267,7 @@ func after_refill():
 ##################################################################################################################################
 # SIGNAL: Destroy the pieces mached after a timing expecified. It is called when start function on timer node is executed
 func _on_destroy_timer_timeout():
-	destroy_matches()
+	destroy_matches()	
 
 # SIGNAL: Collapse the pieces
 func _on_collapse_timer_timeout():
@@ -322,3 +282,9 @@ func _on_lock_holder_remove_lock(place):
 	for i in range (lock_spaces.size() -1, -1, -1):
 		if lock_spaces[i] == place:
 			lock_spaces.remove(i)
+
+# SIGNAL: Spawn the pieces
+func _on_ready_timer_timeout():
+	spawn_piece()
+	spawn_ice()
+	spawn_lock()
