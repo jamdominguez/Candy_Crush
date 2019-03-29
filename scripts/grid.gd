@@ -82,7 +82,11 @@ func is_in_array(array,item):
 		if array[i] == item:
 			return true
 	return false
-	
+
+func remove_from_array(array,item):
+	for i in range (array.size() -1, -1, -1):
+		if array[i] == item:
+			array.remove(i)	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame
 func _process(delta):
@@ -258,9 +262,24 @@ func destroy_matches():
 	else:
 		swap_back()
 
+func check_concrete(column,row):
+	# Check Right
+	if column  < width - 1:
+		emit_signal("damage_concrete", Vector2(column + 1,row))
+	# Check Left
+	if column  > 0:
+		emit_signal("damage_concrete", Vector2(column - 1,row))
+	# Check Up
+	if row  < height - 1:
+		emit_signal("damage_concrete", Vector2(column,row + 1))
+	# Check Down
+	if row  > 0:
+		emit_signal("damage_concrete", Vector2(column,row - 1))
+
 func damage_special(column,row):
 	emit_signal("damage_ice", Vector2(column,row))
 	emit_signal("damage_lock", Vector2(column,row))
+	check_concrete(column,row)
 
 # Collapse the pieces into a column
 func collapse_columns():
@@ -330,6 +349,13 @@ func _on_refill_timer_timeout():
 
 # SIGNAL: Unlock the locked piece in place
 func _on_lock_holder_remove_lock(place):
+	#remove_from_array(lock_spaces,place)
 	for i in range (lock_spaces.size() -1, -1, -1):
 		if lock_spaces[i] == place:
-			lock_spaces.remove(i)
+			lock_spaces.remove(i)		
+
+func _on_concrete_holder_remove_concrete(place):
+	#remove_from_array(concrete_spaces,place)
+	for i in range (concrete_spaces.size() -1, -1, -1):
+		if concrete_spaces[i] == place:
+			concrete_spaces.remove(i)		
