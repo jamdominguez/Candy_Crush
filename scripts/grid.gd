@@ -16,12 +16,16 @@ export (int) var y_offset = -2
 var empty_spaces = PoolVector2Array([Vector2(0,0),Vector2(7,0),Vector2(0,9),Vector2(7,9),Vector2(3,4),Vector2(4,4),Vector2(3,5),Vector2(4,5)])
 var ice_spaces = PoolVector2Array([Vector2(3,0),Vector2(4,0),Vector2(3,9),Vector2(4,9)])
 var lock_spaces = PoolVector2Array([Vector2(3,2),Vector2(4,2),Vector2(3,7),Vector2(4,7)])
+var concrete_spaces = PoolVector2Array([Vector2(3,1),Vector2(4,1),Vector2(3,8),Vector2(4,8)])
 
 # Obstacle Signals
 signal damage_ice
 signal make_ice
 signal make_lock
 signal damage_lock
+signal make_concrete
+signal damage_concrete
+
 
 # The piece array
 var possible_pieces = [
@@ -55,12 +59,15 @@ func _ready():
 	spawn_piece()
 	spawn_ice()
 	spawn_lock()
+	spawn_concrete()
 
 # Check if the place is a available place to move a piece
-func restricted_movement(place):
+func restricted_fill(place):
 	# Check the empty peices
 	if is_in_array(empty_spaces, place):
 		return true
+	if is_in_array(concrete_spaces, place):
+		return true		
 	return false
 
 func restricted_move(place):
@@ -105,6 +112,10 @@ func spawn_ice():
 func spawn_lock():
 	for i in lock_spaces.size():
 		emit_signal("make_lock", lock_spaces[i])
+
+func spawn_concrete():
+	for i in concrete_spaces.size():
+		emit_signal("make_concrete", concrete_spaces[i])
 
 # Returns true is find at less 3 pieces with same color
 func match_at(column, row, color):
@@ -255,7 +266,7 @@ func damage_special(column,row):
 func collapse_columns():
 	for i in width:
 		for j in height:
-			if all_pieces[i][j] == null and !restricted_movement(Vector2(i,j)):
+			if all_pieces[i][j] == null and !restricted_fill(Vector2(i,j)):
 				for k in range(j + 1, height):
 					if all_pieces[i][k] != null:
 						all_pieces[i][k].move(grid_to_pixel(i,j))
@@ -274,7 +285,7 @@ func refill_columns():
 
 # FIXME[This method is mine. Set a random piece into the grid]
 func set_random_piece_on_grid(i,j):
-	if !restricted_movement(Vector2(i,j)):
+	if !restricted_fill(Vector2(i,j)):
 		# choose a random number and store it
 		var rand = randi() % possible_pieces.size()
 		# Instance that piece from the array

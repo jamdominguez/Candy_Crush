@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://sprites/background 2.png" type="Texture" id=1]
 [ext_resource path="res://sprites/Top UI v 2.png" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://scripts/grid.gd" type="Script" id=4]
 [ext_resource path="res://scripts/ice_holder.gd" type="Script" id=5]
 [ext_resource path="res://scripts/lock_holder.gd" type="Script" id=6]
+[ext_resource path="res://scripts/concrete_holder.gd" type="Script" id=7]
 
 [node name="game_window" type="Node2D"]
 
@@ -35,6 +36,9 @@ script = ExtResource( 5 )
 [node name="lock_holder" type="Node2D" parent="."]
 script = ExtResource( 6 )
 
+[node name="concrete_holder" type="Node2D" parent="."]
+script = ExtResource( 7 )
+
 [node name="destroy_timer" type="Timer" parent="."]
 wait_time = 0.5
 one_shot = true
@@ -47,8 +51,10 @@ one_shot = true
 wait_time = 0.5
 one_shot = true
 
+[connection signal="damage_concrete" from="grid" to="concrete_holder" method="_on_grid_damage_concrete"]
 [connection signal="damage_ice" from="grid" to="ice_holder" method="_on_grid_damage_ice"]
 [connection signal="damage_lock" from="grid" to="lock_holder" method="_on_grid_damage_lock"]
+[connection signal="make_concrete" from="grid" to="concrete_holder" method="_on_grid_make_concrete"]
 [connection signal="make_ice" from="grid" to="ice_holder" method="_on_grid_make_ice"]
 [connection signal="make_lock" from="grid" to="lock_holder" method="_on_grid_make_lock"]
 [connection signal="remove_lock" from="lock_holder" to="grid" method="_on_lock_holder_remove_lock"]
