@@ -22,8 +22,7 @@ func make_2d_array():
 ################################################################################################
 ################################################################################################
 # SIGNAL: function for damage_ice signal
-func _on_grid_damage_ice(board_position):
-	print("_on_grid_damage_ice["+String(board_position)+"]")
+func _on_grid_damage_ice(board_position):	
 	var current_ice_piece = ice_pieces[board_position.x][board_position.y]
 	if current_ice_piece != null:
 		current_ice_piece.take_damage(1)
@@ -32,8 +31,7 @@ func _on_grid_damage_ice(board_position):
 			ice_pieces[board_position.x][board_position.y] = null
 
 # SIGNAL: function for make_ice signal
-func _on_grid_make_ice(board_position):
-	print("_on_grid_make_ice["+String(board_position)+"]")
+func _on_grid_make_ice(board_position):	
 	if ice_pieces.size() == 0:
 		ice_pieces = make_2d_array()
 	var current = ice.instance()

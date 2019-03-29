@@ -25,8 +25,7 @@ func make_2d_array():
 ################################################################################################
 ################################################################################################
 # SIGNAL: function for make_lock signal
-func _on_grid_make_lock(board_position):
-	print("_on_grid_make_lock["+String(board_position)+"]")
+func _on_grid_make_lock(board_position):	
 	if lock_pieces.size() == 0:
 		lock_pieces = make_2d_array()
 	var current = licorice.instance()
@@ -35,8 +34,7 @@ func _on_grid_make_lock(board_position):
 	lock_pieces[board_position.x][board_position.y] = current
 
 # SIGNAL: function for damage_lock signal
-func _on_grid_damage_lock(board_position):
-	print("_on_grid_damage_lock["+String(board_position)+"]")
+func _on_grid_damage_lock(board_position):	
 	var current_ice_piece = lock_pieces[board_position.x][board_position.y]
 	if current_ice_piece != null:
 		current_ice_piece.take_damage(1)
