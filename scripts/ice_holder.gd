@@ -7,7 +7,7 @@ var ice = preload("res://scenes/ice.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	print("_ready - ice_holder ice_pieces.size["+String(ice_pieces.size())+"]")
+	pass
 
 # Returns a matrix
 func make_2d_array():

@@ -10,7 +10,7 @@ var slime = preload("res://scenes/slime.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	print("_ready - ice_holder lock_pieces.size["+String(slime_pieces.size())+"]")
+	pass
 
 # Returns a matrix
 func make_2d_array():

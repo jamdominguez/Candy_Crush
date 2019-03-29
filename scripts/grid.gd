@@ -18,6 +18,7 @@ var ice_spaces = PoolVector2Array([Vector2(3,0),Vector2(4,0),Vector2(3,9),Vector
 var lock_spaces = PoolVector2Array([Vector2(3,2),Vector2(4,2),Vector2(3,7),Vector2(4,7)])
 var concrete_spaces = PoolVector2Array([Vector2(3,1),Vector2(4,1),Vector2(3,8),Vector2(4,8)])
 var slime_spaces = PoolVector2Array([Vector2(0,4),Vector2(0,5),Vector2(7,4),Vector2(7,5)])
+var damaged_slim = false
 
 # Obstacle Signals
 signal damage_ice
@@ -354,9 +355,49 @@ func after_refill():
 				find_matches()
 				get_parent().get_node("destroy_timer").start()
 				return
+	if !damaged_slim:
+		generate_slime()
 	state = move
 	move_checked = false
+	damaged_slim = false
 
+func generate_slime():
+	# Make sure there are slime piece on the board
+	if slime_spaces.size() > 0:
+		var slime_made = false
+		var tracker = 0
+		while !slime_made and tracker < 100:
+			var random_num = randi() % slime_spaces.size()
+			var curr_x = slime_spaces[random_num].x
+			var curr_y = slime_spaces[random_num].y
+			var neighbor =  find_normal_neighbor(curr_x, curr_y)
+			if neighbor != null:
+				print(neighbor)
+				# Turn that neighbor into a slime
+				all_pieces[neighbor.x][neighbor.y].queue_free()
+				all_pieces[neighbor.x][neighbor.y] = null
+				slime_spaces.append(Vector2(neighbor.x, neighbor.y))
+				emit_signal("make_slime", Vector2(neighbor.x, neighbor.y))
+				slime_made = true
+			tracker += 1
+
+func find_normal_neighbor(column,row):
+	# Check right first
+	if is_in_grid(Vector2(column + 1, row)):
+		if all_pieces[column + 1][row] != null:
+			return Vector2(column + 1, row)
+	# Check left
+	if is_in_grid(Vector2(column - 1, row)):
+		if all_pieces[column - 1][row] != null:
+			return Vector2(column - 1, row)
+	# Check up
+	if is_in_grid(Vector2(column, row + 1)):
+		if all_pieces[column][row + 1] != null:
+			return Vector2(column, row + 1)
+	# Check right first
+	if is_in_grid(Vector2(column, row - 1)):
+		if all_pieces[column][row - 1] != null:
+			return Vector2(column, row - 1)
 ##################################################################################################################################
 ##################################################################################################################################
 ##################################################################################################################################
@@ -386,6 +427,7 @@ func _on_concrete_holder_remove_concrete(place):
 			concrete_spaces.remove(i)
 
 func _on_slime_holder_remove_slime(place):
+	damaged_slim = true
 	#remove_from_array(concrete_spaces,place)
 	for i in range (slime_spaces.size() -1, -1, -1):
 		if slime_spaces[i] == place:
