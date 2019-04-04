@@ -10,7 +10,8 @@ var concrete = preload("res://scenes/concrete.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	print("_ready - ice_holder lock_pieces.size["+String(concrete_pieces.size())+"]")
+	#print("_ready - ice_holder lock_pieces.size["+String(concrete_pieces.size())+"]")
+	pass
 
 # Returns a matrix
 func make_2d_array():

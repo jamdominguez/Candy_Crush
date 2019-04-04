@@ -57,8 +57,7 @@ var final_touch= Vector2(0,0)
 var controlling = false
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	print("_ready - grid")
+func _ready():	
 	state = move
 	all_pieces = make_2d_array()	
 	spawn_piece()
@@ -246,7 +245,18 @@ func find_matches():
 							add_to_array(Vector2(i,j-1))
 							add_to_array(Vector2(i,j))
 							add_to_array(Vector2(i,j+1))
+	get_bombed_pieces()
 	get_parent().get_node('destroy_timer').start()
+
+func get_bombed_pieces():
+	for i in width:
+		for j in height:
+			if all_pieces[i][j] != null:
+				if all_pieces[i][j].matched:
+					if all_pieces[i][j].is_column_bomb:
+						match_all_in_column(i)
+					elif all_pieces[i][j].is_row_bomb:
+						match_all_in_column(j)
 
 func add_to_array(value, array_to_add = current_matches):
 	if !array_to_add.has(value):
@@ -443,7 +453,6 @@ func generate_slime():
 			var curr_y = slime_spaces[random_num].y
 			var neighbor =  find_normal_neighbor(curr_x, curr_y)
 			if neighbor != null:
-				print(neighbor)
 				# Turn that neighbor into a slime
 				all_pieces[neighbor.x][neighbor.y].queue_free()
 				all_pieces[neighbor.x][neighbor.y] = null
@@ -504,3 +513,13 @@ func _on_slime_holder_remove_slime(place):
 	for i in range (slime_spaces.size() -1, -1, -1):
 		if slime_spaces[i] == place:
 			slime_spaces.remove(i)
+
+func match_all_in_column(column):
+	for i in height:
+		if all_pieces[column][i] != null:
+			all_pieces[column][i].matched = true
+
+func match_all_in_row(row):
+	for i in width:
+		if all_pieces[i][row] != null:
+			all_pieces[i][row].matched = true
