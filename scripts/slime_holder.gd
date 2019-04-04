@@ -34,11 +34,12 @@ func _on_grid_make_slime(board_position):
 	slime_pieces[board_position.x][board_position.y] = current
 
 # SIGNAL: function for damage_lock signal
-func _on_grid_damage_slime(board_position):	
-	var current_slime_piece = slime_pieces[board_position.x][board_position.y]
-	if current_slime_piece != null:
-		current_slime_piece.take_damage(1)
-		if current_slime_piece.health <= 0:
-			current_slime_piece.queue_free()
-			slime_pieces[board_position.x][board_position.y] = null
-			emit_signal("remove_slime", board_position)
+func _on_grid_damage_slime(board_position):
+	if slime_pieces.size() != 0:
+		var current_slime_piece = slime_pieces[board_position.x][board_position.y]
+		if current_slime_piece != null:
+			current_slime_piece.take_damage(1)
+			if current_slime_piece.health <= 0:
+				current_slime_piece.queue_free()
+				slime_pieces[board_position.x][board_position.y] = null
+				emit_signal("remove_slime", board_position)

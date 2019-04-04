@@ -35,11 +35,12 @@ func _on_grid_make_concrete(board_position):
 	concrete_pieces[board_position.x][board_position.y] = current
 
 # SIGNAL: function for damage_lock signal
-func _on_grid_damage_concrete(board_position):	
-	var current_concrete_piece = concrete_pieces[board_position.x][board_position.y]
-	if current_concrete_piece != null:
-		current_concrete_piece.take_damage(1)
-		if current_concrete_piece.health <= 0:
-			current_concrete_piece.queue_free()
-			concrete_pieces[board_position.x][board_position.y] = null
-			emit_signal("remove_concrete", board_position)
+func _on_grid_damage_concrete(board_position):
+	if concrete_pieces.size() != 0:
+		var current_concrete_piece = concrete_pieces[board_position.x][board_position.y]
+		if current_concrete_piece != null:
+			current_concrete_piece.take_damage(1)
+			if current_concrete_piece.health <= 0:
+				current_concrete_piece.queue_free()
+				concrete_pieces[board_position.x][board_position.y] = null
+				emit_signal("remove_concrete", board_position)

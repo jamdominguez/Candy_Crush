@@ -13,11 +13,11 @@ export (int) var offset =  64
 export (int) var y_offset = -2
 
 # Obstacle Stuff FIXME
-var empty_spaces = PoolVector2Array([Vector2(0,0),Vector2(7,0),Vector2(0,9),Vector2(7,9),Vector2(3,4),Vector2(4,4),Vector2(3,5),Vector2(4,5)])
-var ice_spaces = PoolVector2Array([Vector2(3,0),Vector2(4,0),Vector2(3,9),Vector2(4,9)])
-var lock_spaces = PoolVector2Array([Vector2(3,2),Vector2(4,2),Vector2(3,7),Vector2(4,7)])
-var concrete_spaces = PoolVector2Array([Vector2(3,1),Vector2(4,1),Vector2(3,8),Vector2(4,8)])
-var slime_spaces = PoolVector2Array([Vector2(0,4),Vector2(0,5),Vector2(7,4),Vector2(7,5)])
+var empty_spaces = PoolVector2Array([]) #PoolVector2Array([Vector2(0,0),Vector2(7,0),Vector2(0,9),Vector2(7,9),Vector2(3,4),Vector2(4,4),Vector2(3,5),Vector2(4,5)])
+var ice_spaces = PoolVector2Array([]) #PoolVector2Array([Vector2(3,0),Vector2(4,0),Vector2(3,9),Vector2(4,9)])
+var lock_spaces = PoolVector2Array([]) #PoolVector2Array([Vector2(3,2),Vector2(4,2),Vector2(3,7),Vector2(4,7)])
+var concrete_spaces = PoolVector2Array([]) #PoolVector2Array([Vector2(3,1),Vector2(4,1),Vector2(3,8),Vector2(4,8)])
+var slime_spaces = PoolVector2Array([]) #PoolVector2Array([Vector2(0,4),Vector2(0,5),Vector2(7,4),Vector2(7,5)])
 var damaged_slim = false
 
 # Obstacle Signals
@@ -263,7 +263,6 @@ func get_bombed_pieces():
 func add_to_array(value, array_to_add = current_matches):
 	if !array_to_add.has(value):
 		array_to_add.append(value)
-	pass
 
 func is_piece_null(column,row):
 	if all_pieces[column][row] == null:
@@ -301,15 +300,15 @@ func find_bombs():
 		if col_matched == 5 or row_matched == 5:
 			print("color bomb")
 			return
-		if col_matched >= 3 and row_matched >= 3:
+		elif col_matched >= 3 and row_matched >= 3:
 			print("adjacent bomb")
 			make_bom(0,current_color)
 			return
-		if col_matched == 4:
+		elif col_matched == 4:
 			print("column bomb")
 			make_bom(1,current_color)
 			return
-		if row_matched == 4:
+		elif row_matched == 4:
 			print("row bomb")
 			make_bom(2,current_color)
 			return
