@@ -6,7 +6,7 @@
 [ext_resource path="res://Match 3 Assets/Pieces/Green Adjacent.png" type="Texture" id=4]
 [ext_resource path="res://sprites/pieces/Green Piece.png" type="Texture" id=5]
 
-[node name="green_piece" instance=ExtResource( 1 )]
+[node name="green_piece" index="0" instance=ExtResource( 1 )]
 color = "green"
 row_texture = ExtResource( 2 )
 column_texture = ExtResource( 3 )

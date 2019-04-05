@@ -56,6 +56,11 @@ var first_touch= Vector2(0,0)
 var final_touch= Vector2(0,0)
 var controlling = false
 
+# Scoring Variables
+signal update_score
+export (int) var piece_value
+var streak = 1
+
 # Called when the node enters the scene tree for the first time.
 func _ready():	
 	state = move
@@ -348,6 +353,8 @@ func destroy_matches():
 				was_matches = true
 				piece.queue_free()
 				all_pieces[i][j] = null
+				print("destrooooy")
+				emit_signal("update_score", piece_value * streak)
 	move_checked = true
 	if was_matches:
 		get_parent().get_node('collapse_timer').start()
@@ -404,6 +411,7 @@ func collapse_columns():
 
 # Refill with pieces a column
 func refill_columns():
+	streak += 1
 	for i in width:
 		for j in height:
 			if all_pieces[i][j] == null:
@@ -430,7 +438,7 @@ func set_random_piece_on_grid(i,j):
 		all_pieces[i][j] = piece
 
 # Check the matches after refill
-func after_refill():
+func after_refill():	
 	for i in width:
 		for j in height:
 			if all_pieces[i][j] != null and match_at(i,j,all_pieces[i][j].color):
@@ -440,6 +448,7 @@ func after_refill():
 	if !damaged_slim:
 		generate_slime()
 	state = move
+	streak = 1
 	move_checked = false
 	damaged_slim = false
 
