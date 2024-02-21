@@ -54,7 +54,6 @@ one_shot = true
 [node name="refill_timer" type="Timer" parent="."]
 wait_time = 0.5
 one_shot = true
-
 [connection signal="damage_concrete" from="grid" to="concrete_holder" method="_on_grid_damage_concrete"]
 [connection signal="damage_ice" from="grid" to="ice_holder" method="_on_grid_damage_ice"]
 [connection signal="damage_lock" from="grid" to="lock_holder" method="_on_grid_damage_lock"]

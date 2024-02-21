@@ -3,6 +3,9 @@
 importer="texture"
 type="StreamTexture"
 path="res://.import/godot match 3 settings bar.png-804646d50ad7b2cd768f7e8c9fa6ddb7.stex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 

@@ -3,6 +3,9 @@
 importer="texture"
 type="StreamTexture"
 path="res://.import/GameOver Background.png-7d7d2896626b042a009a3fbaa08b9fbc.stex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 

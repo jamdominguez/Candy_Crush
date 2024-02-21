@@ -3,6 +3,9 @@
 importer="texture"
 type="StreamTexture"
 path="res://.import/godot match 3 logo.png-a20281ea760ecb06f422bdf868b474c4.stex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
